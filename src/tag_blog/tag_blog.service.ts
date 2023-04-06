@@ -15,24 +15,10 @@ export class TagBlogService {
         return this.TagBlogRepository.find()
     }
 
-    async findLastById() {
-        const lastID = await this.TagBlogRepository.find({
-            order: {
-                id: 'DESC',
-            },
-            take: 1,
-        });
-        try {
-            return lastID[0].id;
-        } catch (error) {
-            return 0;
-        }
-    }
-
     creatTagBlog(createTagBlogDto: TagBlogDto) {
         try {
             const newTagBlog =
-                this.TagBlogRepository.create(createTagBlogDto);
+                this.TagBlogRepository.create({ ...createTagBlogDto, created_at: new Date(), update_at: new Date() });
             return this.TagBlogRepository.save(newTagBlog);
         } catch (error) {
             return HttpStatus.NOT_FOUND;
@@ -43,7 +29,7 @@ export class TagBlogService {
         try {
             await this.TagBlogRepository.update(
                 updateTagBlog.id,
-                updateTagBlog,
+                { ...updateTagBlog, update_at: new Date() },
             );
             return await this.TagBlogRepository.findOne({
                 where: {
@@ -55,12 +41,20 @@ export class TagBlogService {
         }
     }
 
+    findIdTagBlog(id: number) {
+        return this.TagBlogRepository.findOne({
+            where: {
+                id: id,
+            },
+        });
+    }
+
     deleteTagBlog(id: number) {
         try {
-          this.TagBlogRepository.delete(id);
-          return HttpStatus.OK;
+            this.TagBlogRepository.delete(id);
+            return id;
         } catch (error) {
-          return HttpStatus.NOT_FOUND;
+            return HttpStatus.NOT_FOUND;
         }
-      }
+    }
 }

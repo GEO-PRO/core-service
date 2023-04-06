@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataEntity } from './app.entity';
-import { BlogModule } from './blog/blog.module';
 import { TagBlogModule } from './tag_blog/tag_blog.module';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
   imports: [
@@ -23,8 +23,8 @@ import { TagBlogModule } from './tag_blog/tag_blog.module';
       }),
       inject: [ConfigService],
     }),
-    BlogModule,
-    TagBlogModule],
+    TagBlogModule,
+    BlogsModule],
   controllers: [],
   providers: [],
 })

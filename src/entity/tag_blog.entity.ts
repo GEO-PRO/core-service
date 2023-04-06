@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class TagBlog {
-    @PrimaryColumn({})
+    @PrimaryGeneratedColumn()
+    @Generated('increment')
     id: number;
 
     @Column({})
@@ -14,15 +15,9 @@ export class TagBlog {
     })
     descript: string;
 
-    @Column({
-        nullable: true,
-        default: '',
-    })
-    create_at: string;
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    created_at: Date;
 
-    @Column({
-        nullable: true,
-        default: '',
-    })
-    update_at: string;
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    update_at: Date;
 }

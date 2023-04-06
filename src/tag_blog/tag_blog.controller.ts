@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TimeNow } from 'src/component-service/time_now.service';
 import { TagBlogDto } from './tag_blog.dto';
 import { TagBlogService } from './tag_blog.service';
@@ -14,10 +14,14 @@ export class TagBlogController {
         return this.TagBlogService.getAll()
     }
 
+    @Get(':id')
+    findId(@Param('id', ParseIntPipe) id: number) {
+        return this.TagBlogService.findIdTagBlog(id)
+    }
+
     @Post('create')
     @UsePipes(ValidationPipe)
     async create(@Body() createTagBlogDto: TagBlogDto) {
-        createTagBlogDto.id = (await this.TagBlogService.findLastById()) + 1;
         return this.TagBlogService.creatTagBlog(createTagBlogDto);
     }
 
