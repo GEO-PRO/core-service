@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataEntity } from './app.entity';
 import { TagBlogModule } from './tag_blog/tag_blog.module';
 import { BlogsModule } from './blogs/blogs.module';
+import { UploadfileModule } from './uploadfile/uploadfile.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { BlogsModule } from './blogs/blogs.module';
       inject: [ConfigService],
     }),
     TagBlogModule,
-    BlogsModule],
+    BlogsModule,
+    UploadfileModule],
   controllers: [],
   providers: [],
 })

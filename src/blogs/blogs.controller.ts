@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { BlogsDto } from './blogs.dto';
 
@@ -36,7 +36,7 @@ export class BlogsController {
     }
 
     @Post('filter')
-    filterBlogs(@Body() tag_blogs_id: number[]) {
+    filterBlogs(@Body() tag_blogs_id: Number[]) {
         return this.BlogsService.filterBlogsWithTags(tag_blogs_id)
     }
 }

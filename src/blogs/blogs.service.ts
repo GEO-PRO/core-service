@@ -4,6 +4,8 @@ import { Blogs } from 'src/entity/blogs.entity';
 import { Repository } from 'typeorm';
 import { BlogsDto } from './blogs.dto';
 import { LinkTagBlog } from 'src/entity/link_tag_blog.entity';
+import { LinkFilesBlog } from 'src/entity/link_files_blog.entity';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class BlogsService {
@@ -13,6 +15,9 @@ export class BlogsService {
 
         @InjectRepository(LinkTagBlog)
         private readonly LinkTagBlogRepository: Repository<LinkTagBlog>,
+
+        @InjectRepository(LinkFilesBlog)
+        private readonly LinkFilesBlogRepository: Repository<LinkFilesBlog>,
     ) { }
 
     async getAll() {
@@ -30,10 +35,13 @@ export class BlogsService {
     async findIdBlogs(idFind) {
         const query = this.BlogsRepository.createQueryBuilder('blogs')
             .select('blogs.*')
-            .addSelect('STRING_AGG(tag.name, \', \')', 'tag_name')
-            .addSelect('STRING_AGG(tag.id::text, \', \')', 'link_tag_blog')
-            .leftJoin('link_tag_blog', 'link', 'link.blog_id = blogs.id')
-            .leftJoin('tag_blog', 'tag', 'link.tag_blog_id = tag.id')
+            .addSelect('STRING_AGG(DISTINCT tag.name, \', \')', 'tag_name')
+            .addSelect('STRING_AGG(DISTINCT files.name, \', \')', 'files_name')
+            .addSelect('STRING_AGG(DISTINCT tag.id::text, \', \')', 'link_tag_blog')
+            .leftJoin('link_tag_blog', 'link_tag', 'link_tag.blog_id = blogs.id')
+            .leftJoin('tag_blog', 'tag', 'link_tag.tag_blog_id = tag.id')
+            .leftJoin('link_files_blog', 'link_file', 'link_file.blog_id = blogs.id')
+            .leftJoin('files', 'files', 'link_file.file_id = files.id')
             .where('blogs.id = :id', { id: idFind })
             .groupBy('blogs.id');
         return await query.getRawMany();
@@ -55,6 +63,7 @@ export class BlogsService {
 
     async creatBlogs(createBlogsDto: BlogsDto) {
         try {
+            /* Create link tag blog */
             createBlogsDto.link_tag_blog.forEach((value) => {
                 const newLinkTagBlog = this.LinkTagBlogRepository.create({
                     blog_id: createBlogsDto.id,
@@ -62,6 +71,8 @@ export class BlogsService {
                 })
                 this.LinkTagBlogRepository.save(newLinkTagBlog);
             });
+
+            /* Create Blog */
             const newBlogs =
                 this.BlogsRepository.create({ ...createBlogsDto, created_at: new Date(), update_at: new Date() });
             this.BlogsRepository.save(newBlogs);
@@ -73,7 +84,7 @@ export class BlogsService {
 
     async updateBlogs(updateBlogs) {
         try {
-            // Delete all value have blog_id and create new data
+            // Delete all value have blog_id and create new data in link_tag_blog
             await this.LinkTagBlogRepository.delete({ blog_id: updateBlogs.id });
             await updateBlogs.link_tag_blog.forEach((value) => {
                 const newLinkTagBlog = this.LinkTagBlogRepository.create({
@@ -83,8 +94,21 @@ export class BlogsService {
                 this.LinkTagBlogRepository.save(newLinkTagBlog);
             });
 
-            const newData = { ...updateBlogs, update_at: new Date() }
-            const { link_tag_blog, ...dataUpdate } = newData;
+            // Delete all value have blog_id and create new data in link_file_blog
+            if (updateBlogs.link_file_blog.length > 0) {
+                await this.LinkFilesBlogRepository.delete({ blog_id: updateBlogs.id });
+                await updateBlogs.link_file_blog.forEach((value) => {
+                    const newLinkFilesBlog = this.LinkFilesBlogRepository.create({
+                        blog_id: updateBlogs.id,
+                        file_id: value
+                    })
+                    this.LinkFilesBlogRepository.save(newLinkFilesBlog);
+                });
+            }
+
+            // Create new blog
+            const newData = { ...updateBlogs }
+            const { link_tag_blog, link_file_blog, ...dataUpdate } = newData;
             await this.BlogsRepository.update(
                 updateBlogs.id,
                 dataUpdate,
@@ -101,6 +125,8 @@ export class BlogsService {
 
     async deleteBlogs(idDelete) {
         try {
+            await this.LinkFilesBlogRepository.delete({ blog_id: idDelete.id });
+            await this.LinkTagBlogRepository.delete({ blog_id: idDelete.id });
             await this.LinkTagBlogRepository.delete({ blog_id: idDelete.id });
             await this.BlogsRepository.delete(idDelete);
             return idDelete.id;
@@ -110,15 +136,37 @@ export class BlogsService {
     }
 
     async filterBlogsWithTags(tag_blogs_id) {
+        const page = 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
+
+        const query = this.BlogsRepository.createQueryBuilder('blogs')
+            .select('blogs.*')
+            .skip(2)
+            .take(3)
+            .addSelect('STRING_AGG(DISTINCT tag.name, \', \')', 'tag_name')
+            .addSelect('STRING_AGG(DISTINCT files.name, \', \')', 'files_name')
+            .addSelect('STRING_AGG(DISTINCT tag.id::text, \', \')', 'link_tag_blog')
+            .leftJoin('link_tag_blog', 'link_tag', 'link_tag.blog_id = blogs.id')
+            .leftJoin('tag_blog', 'tag', 'link_tag.tag_blog_id = tag.id')
+            .leftJoin('link_files_blog', 'link_file', 'link_file.blog_id = blogs.id')
+            .leftJoin('files', 'files', 'link_file.file_id = files.id')
+            .groupBy('blogs.id')
+            .addGroupBy('blogs.id')
+
         if (tag_blogs_id.length > 0) {
-            const query = this.BlogsRepository.createQueryBuilder('blogs')
-                .leftJoin('link_tag_blog', 'link', 'link.blog_id = blogs.id')
-                .leftJoin('tag_blog', 'tag', 'link.tag_blog_id = tag.id')
-                .where('link.tag_blog_id IN (:...ids)', { ids: tag_blogs_id })
-                .select(['blogs.*', 'link.*', 'tag.name as tag_name']);
-            return await query.getRawMany();
-        } else {
-            return await this.BlogsRepository.find()
+            query.andWhere('link_tag.tag_blog_id IN (:...ids)', { ids: tag_blogs_id })
         }
+
+        const getTotalData = await query.getCount();
+        const totalPages = getTotalData / limit;
+
+        const result = await query.offset(skip).limit(limit).getRawMany();
+        return {
+            pageIn: page,
+            totalPages: totalPages,
+            totalData: getTotalData,
+            result: result
+        };
     }
 }
