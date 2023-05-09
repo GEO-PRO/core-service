@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Files } from 'src/entity/files.entity';
-import { LinkFilesBlog } from 'src/entity/link_files_blog.entity';
+import { Files } from 'src/entity/blogs/files.entity';
+import { LinkFilesBlog } from 'src/entity/blogs/link_files_blog.entity';
 import { EntityManager, Repository } from 'typeorm';
 
 @Injectable()

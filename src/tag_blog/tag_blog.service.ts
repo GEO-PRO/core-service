@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TagBlog } from 'src/entity/tag_blog.entity';
+import { TagBlog } from 'src/entity/blogs/tag_blog.entity';
 import { Repository } from 'typeorm';
 import { TagBlogDto } from './tag_blog.dto';
 
@@ -12,7 +12,12 @@ export class TagBlogService {
     ) { }
 
     getAll() {
-        return this.TagBlogRepository.find()
+        const query = this.TagBlogRepository.createQueryBuilder('tag_blog')
+            .select('tag_blog.*')
+            .addSelect('count(tag_blog.id)', 'count')
+            .leftJoin('link_tag_blog', 'link_tag', 'link_tag.tag_blog_id = tag_blog.id')
+            .groupBy('tag_blog.id')
+        return query.getRawMany()
     }
 
     creatTagBlog(createTagBlogDto: TagBlogDto) {

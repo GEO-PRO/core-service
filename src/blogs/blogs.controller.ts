@@ -36,7 +36,7 @@ export class BlogsController {
     }
 
     @Post('filter')
-    filterBlogs(@Body() tag_blogs_id: Number[]) {
-        return this.BlogsService.filterBlogsWithTags(tag_blogs_id)
+    filterBlogs(@Body() inputFilter) {
+        return this.BlogsService.filterBlogsWithTags(inputFilter)
     }
 }

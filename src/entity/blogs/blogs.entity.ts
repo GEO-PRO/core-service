@@ -30,13 +30,13 @@ export class Blogs {
     @AfterInsert()
     @AfterUpdate()
     formatContent() {
-        const content = [this.title, this.summary].join(', ');
+        const content = [this.title, this.summary].join(' ');
         const slug = content
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .toLowerCase()
             .replace(/[^a-z0-9 ]/g, '')
-            .replace(/\s+/g, ', ');
+            .replace(/\s+/g, ' ');
         this.tsvector_column = slug;
     }
 }

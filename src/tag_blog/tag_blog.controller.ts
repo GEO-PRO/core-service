@@ -7,7 +7,7 @@ import { TagBlogService } from './tag_blog.service';
 export class TagBlogController {
     constructor(
         private readonly TagBlogService: TagBlogService,
-        private readonly NowService: TimeNow) { }
+    ) { }
 
     @Get('get-all')
     findAll() {
@@ -35,10 +35,4 @@ export class TagBlogController {
     deleteTagBlog(@Body() id: number) {
         return this.TagBlogService.deleteTagBlog(id);
     }
-
-    @Get('time')
-    time() {
-        return this.NowService.now()
-    }
-
 }

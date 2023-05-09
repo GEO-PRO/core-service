@@ -1,11 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Blogs } from 'src/entity/blogs.entity';
+import { Blogs } from 'src/entity/blogs/blogs.entity';
 import { Repository } from 'typeorm';
 import { BlogsDto } from './blogs.dto';
-import { LinkTagBlog } from 'src/entity/link_tag_blog.entity';
-import { LinkFilesBlog } from 'src/entity/link_files_blog.entity';
-import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { LinkTagBlog } from 'src/entity/blogs/link_tag_blog.entity';
+import { LinkFilesBlog } from 'src/entity/blogs/link_files_blog.entity';
 
 @Injectable()
 export class BlogsService {
@@ -127,7 +126,6 @@ export class BlogsService {
         try {
             await this.LinkFilesBlogRepository.delete({ blog_id: idDelete.id });
             await this.LinkTagBlogRepository.delete({ blog_id: idDelete.id });
-            await this.LinkTagBlogRepository.delete({ blog_id: idDelete.id });
             await this.BlogsRepository.delete(idDelete);
             return idDelete.id;
         } catch (error) {
@@ -135,15 +133,13 @@ export class BlogsService {
         }
     }
 
-    async filterBlogsWithTags(tag_blogs_id) {
-        const page = 1;
+    async filterBlogsWithTags(inputFilter) {
+        const page = inputFilter.page;
         const limit = 10;
         const skip = (page - 1) * limit;
 
         const query = this.BlogsRepository.createQueryBuilder('blogs')
             .select('blogs.*')
-            .skip(2)
-            .take(3)
             .addSelect('STRING_AGG(DISTINCT tag.name, \', \')', 'tag_name')
             .addSelect('STRING_AGG(DISTINCT files.name, \', \')', 'files_name')
             .addSelect('STRING_AGG(DISTINCT tag.id::text, \', \')', 'link_tag_blog')
@@ -152,14 +148,18 @@ export class BlogsService {
             .leftJoin('link_files_blog', 'link_file', 'link_file.blog_id = blogs.id')
             .leftJoin('files', 'files', 'link_file.file_id = files.id')
             .groupBy('blogs.id')
-            .addGroupBy('blogs.id')
 
-        if (tag_blogs_id.length > 0) {
-            query.andWhere('link_tag.tag_blog_id IN (:...ids)', { ids: tag_blogs_id })
+        if (inputFilter.tag_blogs_id.length > 0) {
+            query.where('link_tag.tag_blog_id IN (:...ids)', { ids: inputFilter.tag_blogs_id })
         }
 
+        if (inputFilter.searchParam) {
+            query.where('to_tsvector(unaccent(title) || unaccent(summary)) @@ to_tsquery(:keyword)', { keyword: inputFilter.searchParam })
+        }
+
+
         const getTotalData = await query.getCount();
-        const totalPages = getTotalData / limit;
+        const totalPages = Math.ceil(getTotalData / limit);
 
         const result = await query.offset(skip).limit(limit).getRawMany();
         return {
