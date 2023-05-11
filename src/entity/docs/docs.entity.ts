@@ -18,6 +18,9 @@ export class Docs {
     @Column({nullable: true })
     descript: string
 
+    @Column({nullable: true })
+    image_id: number
+
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;
 

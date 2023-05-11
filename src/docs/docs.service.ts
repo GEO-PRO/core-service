@@ -43,12 +43,15 @@ export class DocsService {
             .addSelect('STRING_AGG(DISTINCT tag.name, \', \')', 'tag_name')
             .addSelect('STRING_AGG(DISTINCT tag.id::text, \', \')', 'link_tag_doc')
             .addSelect('title.name', 'title_name')
+            .addSelect('files.name', 'image_name')
             .leftJoin('link_tag_doc', 'link_tag', 'link_tag.doc_id = docs.id')
             .leftJoin('tag_doc', 'tag', 'link_tag.tag_doc_id = tag.id')
             .leftJoin('title_doc', 'title', 'title.id = docs.title_doc_id')
+            .leftJoin('files', 'files', 'files.id = docs.image_id')
             .where('docs.id = :id', { id: idFind })
             .groupBy('docs.id')
             .addGroupBy('title.name')
+            .addGroupBy('files.name')
         return await query.getRawMany();
     }
 

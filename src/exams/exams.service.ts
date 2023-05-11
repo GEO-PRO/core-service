@@ -43,12 +43,15 @@ export class ExamsService {
             .addSelect('STRING_AGG(DISTINCT tag.name, \', \')', 'tag_name')
             .addSelect('STRING_AGG(DISTINCT tag.id::text, \', \')', 'link_tag_exam')
             .addSelect('title.name', 'title_name')
+            .addSelect('files.name', 'image_name')
             .leftJoin('link_tag_exam', 'link_tag', 'link_tag.exam_id = exams.id')
             .leftJoin('tag_exam', 'tag', 'link_tag.tag_exam_id = tag.id')
             .leftJoin('title_exam', 'title', 'title.id = exams.title_exam_id')
+            .leftJoin('files', 'files', 'files.id = exams.image_id')
             .where('exams.id = :id', { id: idFind })
             .groupBy('exams.id')
             .addGroupBy('title.name')
+            .addGroupBy('files.name')
         return await query.getRawMany();
     }
 

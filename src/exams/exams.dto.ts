@@ -14,5 +14,7 @@ export class ExamsDto {
     @IsNotEmpty({})
     file: string;
 
-    descript: string
+    descript: string;
+
+    image_id: number;
 }

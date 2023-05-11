@@ -22,15 +22,12 @@ export class FilesController {
             },
         }),
     }))
-    async uploadFileUiWeb(@UploadedFile() file, @Body('idBlog') idBlog: number) {
-        // console.log(file);
-
-        // Copy file to another directory
+    async uploadFileUiWeb(@UploadedFile() file) {
         const readStream = fs.createReadStream(file.path);
         const writeStream = fs.createWriteStream('../ui-admin/public/images/' + file.filename);
         readStream.pipe(writeStream);
 
         // Create file database
-        return this.UploadfilesService.creatFiles({ name: file.filename, idBlog: idBlog })
+        return this.UploadfilesService.creatFiles({ name: file.filename })
     }
 }

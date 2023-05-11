@@ -15,4 +15,6 @@ export class DocsDto {
     file: string;
 
     descript: string
+
+    image_id: number
 }

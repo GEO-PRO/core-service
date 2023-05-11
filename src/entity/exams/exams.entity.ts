@@ -12,10 +12,13 @@ export class Exams {
     @Column({})
     title_exam_id: number;
 
+    @Column({ nullable: true })
+    image_id: number;
+
     @Column({})
     file: string;
 
-    @Column({nullable: true })
+    @Column({ nullable: true })
     descript: string
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
