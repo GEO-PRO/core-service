@@ -17,16 +17,12 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const moment = require("moment");
-const fs = require("fs");
 const uploadfile_service_1 = require("./uploadfile.service");
 let FilesController = class FilesController {
     constructor(UploadfilesService) {
         this.UploadfilesService = UploadfilesService;
     }
     async uploadFileUiWeb(file) {
-        const readStream = fs.createReadStream(file.path);
-        const writeStream = fs.createWriteStream('../ui-admin/public/images/' + file.filename);
-        readStream.pipe(writeStream);
         return this.UploadfilesService.creatFiles({ name: file.filename });
     }
 };
@@ -34,7 +30,7 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         storage: (0, multer_1.diskStorage)({
-            destination: '../ui-web/public/images',
+            destination: './src/uploadfile/images-service/images',
             filename: (req, file, cb) => {
                 const now = moment();
                 const formattedTime = moment(now).format('DD-MM-YYYY');
