@@ -21,6 +21,8 @@ const title_exam_module_1 = require("./title_exam/title_exam.module");
 const tag_exam_module_1 = require("./tag_exam/tag_exam.module");
 const exams_module_1 = require("./exams/exams.module");
 const users_module_1 = require("./users/users.module");
+const serve_static_1 = require("@nestjs/serve-static");
+const path_1 = require("path");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -40,6 +42,10 @@ AppModule = __decorate([
                     synchronize: true,
                 }),
                 inject: [config_1.ConfigService],
+            }),
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)('src', 'uploadfile', 'images'),
+                serveRoot: '/images',
             }),
             tag_blog_module_1.TagBlogModule,
             blogs_module_1.BlogsModule,

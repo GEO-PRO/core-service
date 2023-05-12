@@ -12,6 +12,8 @@ import { TitleExamModule } from './title_exam/title_exam.module';
 import { TagExamModule } from './tag_exam/tag_exam.module';
 import { ExamsModule } from './exams/exams.module';
 import { UsersModule } from './users/users.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -35,6 +37,10 @@ import { UsersModule } from './users/users.module';
         synchronize: true,
       }),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join('src', 'uploadfile', 'images'),
+      serveRoot: '/images',
     }),
     TagBlogModule,
     BlogsModule,
