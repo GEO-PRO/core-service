@@ -1,35 +1,35 @@
 version: "3.8"
 services:
-  db:
-    image: postgres:15.0
-    restart: always
-    ports:
-      - 5434:5432
-    env_file: .env
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
-    networks:
-      - geopro-core-service-network
-
-  dev-adminer:
-    image: adminer
-    ports:
-      - 8089:8080
-    networks:
-      - geopro-core-service-network
-
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: nestjs.dockerfile
-  #   restart: unless-stopped
+  # db:
+  #   image: postgres:15.0
+  #   restart: always
   #   ports:
-  #     - "3001:3001"
+  #     - 5434:5432
+  #   env_file: .env
   #   volumes:
-  #     - ./dist:/app/dist
+  #     - ./pg_data:/var/lib/postgresql/data
   #   networks:
   #     - geopro-core-service-network
 
-networks:
-  geopro-core-service-network:
-    driver: bridge
+  # dev-adminer:
+  #   image: adminer
+  #   ports:
+  #     - 8089:8080
+  #   networks:
+  #     - geopro-core-service-network
+
+  app:
+    build:
+      context: .
+      dockerfile: nestjs.dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./dist:/app/dist
+#     networks:
+#       - geopro-core-service-network
+
+# networks:
+#   geopro-core-service-network:
+#     driver: bridge
