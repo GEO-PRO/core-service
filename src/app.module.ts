@@ -25,6 +25,11 @@ import { UsersModule } from './users/users.module';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
+        // host: "dev-data",
+        // port: 5434,
+        // username: "pgadmin",
+        // password: "pgadmin",
+        // database: "geo_pro",
         entities: dataEntity,
         // Production: set to true
         synchronize: true,
@@ -41,7 +46,7 @@ import { UsersModule } from './users/users.module';
     TagExamModule,
     ExamsModule,
     UsersModule,
-    ],
+  ],
   controllers: [],
   providers: [],
 })
