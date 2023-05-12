@@ -13,7 +13,7 @@ export class FilesController {
     @Post()
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
-            destination: '../ui-web/public/images',
+            destination: './images-service/images',
             filename: (req, file, cb) => {
                 const now = moment();
                 const formattedTime = moment(now).format('DD-MM-YYYY');
