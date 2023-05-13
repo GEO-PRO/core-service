@@ -10,6 +10,7 @@ export class BlogsController {
     @Get('get-all')
     findAll() {
         return this.BlogsService.getAll()
+        // return "blogs"
     }
 
     @Get(':id')

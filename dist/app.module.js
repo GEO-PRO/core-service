@@ -44,7 +44,7 @@ AppModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)('src', 'uploadfile', 'images'),
+                rootPath: (0, path_1.join)('images'),
                 serveRoot: '/images',
             }),
             tag_blog_module_1.TagBlogModule,

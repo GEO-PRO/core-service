@@ -39,7 +39,7 @@ import { join } from 'path';
       inject: [ConfigService],
     }),
     ServeStaticModule.forRoot({
-      rootPath: join('src', 'uploadfile', 'images'),
+      rootPath: join('images'),
       serveRoot: '/images',
     }),
     TagBlogModule,

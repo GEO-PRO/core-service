@@ -9,3 +9,4 @@ services:
       - "3001:3001"
     volumes:
       - ./dist:/app/dist
+      - ./images:/app/images
