@@ -15,6 +15,7 @@ const link_tag_exam_entity_1 = require("./entity/exams/link_tag_exam.entity");
 const tag_exam_entity_1 = require("./entity/exams/tag_exam.entity");
 const title_exam_entity_1 = require("./entity/exams/title_exam.entity");
 const users_entity_1 = require("./entity/users/users.entity");
+const youtube_entity_1 = require("./entity/youtube/youtube.entity");
 exports.dataEntity = [
     blogs_entity_1.Blogs,
     files_entity_1.Files,
@@ -29,6 +30,7 @@ exports.dataEntity = [
     tag_exam_entity_1.TagExam,
     exams_entity_1.Exams,
     link_tag_exam_entity_1.LinkTagExam,
-    users_entity_1.Users
+    users_entity_1.Users,
+    youtube_entity_1.Youtube
 ];
 //# sourceMappingURL=app.entity.js.map

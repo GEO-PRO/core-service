@@ -12,6 +12,7 @@ import { LinkTagExam } from "./entity/exams/link_tag_exam.entity";
 import { TagExam } from "./entity/exams/tag_exam.entity";
 import { TitleExam } from "./entity/exams/title_exam.entity";
 import { Users } from "./entity/users/users.entity";
+import { Youtube } from "./entity/youtube/youtube.entity";
 
 export const dataEntity = [
     Blogs,
@@ -27,5 +28,6 @@ export const dataEntity = [
     TagExam,
     Exams,
     LinkTagExam,
-    Users
+    Users,
+    Youtube
 ]

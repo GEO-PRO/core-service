@@ -23,6 +23,7 @@ const exams_module_1 = require("./exams/exams.module");
 const users_module_1 = require("./users/users.module");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
+const youtube_module_1 = require("./youtube/youtube.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -57,6 +58,7 @@ AppModule = __decorate([
             tag_exam_module_1.TagExamModule,
             exams_module_1.ExamsModule,
             users_module_1.UsersModule,
+            youtube_module_1.YoutubeModule
         ],
         controllers: [],
         providers: [],

@@ -14,6 +14,7 @@ import { ExamsModule } from './exams/exams.module';
 import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { YoutubeModule } from './youtube/youtube.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { join } from 'path';
     TagExamModule,
     ExamsModule,
     UsersModule,
+    YoutubeModule
   ],
   controllers: [],
   providers: [],
